@@ -1,24 +1,14 @@
 var textfile = "test.txt";
-var datafile = "data.json";
-
 var ready = false;
 var datar = false;
-var jsonr = false;
-
 var data;
-var val;
-var count = 0;
+var nowshow;
 
 $.get(textfile,function(txt){
 	data = txt.split("\n");
 	datar = true;
 	start();
 }); 
-$.getJSON(datafile, function(json) {
-	val = json;
-	jsonr = true;
-	start();
-});
 
 $(document).ready(function(){
 	ready = true;
@@ -27,57 +17,57 @@ $(document).ready(function(){
 
 function start(){
 	console.log("tes");
-	if(ready && jsonr && datar){
-		if(val[0] == -123){
-			initJson();
-		}
-		
-		for (var i=0; i < val.length; i++) {
-			if(val[i] == 0){
-				count = i;
-				show();
-				break;
-			}
-		}
+	if(datar && ready){
+		$.post( "data.php",{action:"last"}, function(respon) {
+			var res = $.parseJSON(respon);
+			console.log(res.status);
+			show(res.value);
+		}, "text")
+		.fail(function() {
+			console.log("gagal");
+		});
 	}
 }
 
-function show(){
-	$("#sentence").html(data[count]);
+function show(id){
+	nowshow = id;
+	$("#sentence").html(data[id]);
+	ready = true;
+}
+
+function post(now, value){
+	$.post( "data.php",{action:"choose",id:now,val: value}, function(respon) {
+		console.log(respon);
+		var res = $.parseJSON(respon);
+		console.log(res.status);
+		show(res.value);
+	}, "text")
+	.fail(function() {
+		console.log("gagal");
+	});
 }
 
 $("#button-positif").click(function() {
-	val[count] = 1;
-	save(val);
-	
-	count++;
-	show();
-});
-
-$("#button-negatif").click(function() {
-	val[count] = -1;
-	save(val);
-	
-	count++;
-	show();
-});
-
-function save(tabledata){
-	$.ajax({
-		type: "GET",
-		dataType : 'json',
-		async: false,
-		url: 'save.php',
-		data: { data: JSON.stringify(tabledata) },
-		success: function () {alert("Thanks!"); },
-		failure: function() {alert("Error!");}
-	});	
-}
-
-
-function initJson(){
-	val = [];
-	for(var i = 0; i < data.length; i++) {
-		val.push(0);
+	if(ready){
+		ready = false;
+		post(nowshow, 1);
 	}
-}
+});
+$("#button-negatif").click(function() {
+	if(ready){
+		ready = false;
+		post(nowshow, -1);
+	}
+});
+$("#button-delete").click(function() {
+	if(ready){
+		ready = false;
+		post(nowshow, -2);
+	}
+});
+$("#button-prev").click(function() {
+	if(ready){
+		ready = false;
+		show(nowshow - 1);
+	}
+});
