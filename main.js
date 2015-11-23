@@ -32,6 +32,7 @@ function start(){
 function show(id){
 	nowshow = id;
 	$("#sentence").html(data[id]);
+	$("button").focusout();
 	ready = true;
 }
 
@@ -41,7 +42,7 @@ function post(now, value){
 		var res = $.parseJSON(respon);
 		console.log(res.status);
 		show(res.value);
-	}, "text")
+		}, "text")
 	.fail(function() {
 		console.log("gagal");
 	});

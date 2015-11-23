@@ -8,6 +8,10 @@ footer {
    height:60px;   /* Height of the footer */
 }
 
+.btn {
+	padding: 12px 22px;
+}
+
 #button-prev {
 	margin-top: 10px;
 }
