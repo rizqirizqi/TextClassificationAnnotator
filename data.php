@@ -3,7 +3,7 @@
 	$string = file_get_contents($filename);
 	$json = json_decode($string, true);
 	if(count($json) == 0){
-		$json = array_fill(0,1000,0);
+		$json = array_fill(0,3000,0);
 		$file = fopen($filename, 'w') or die();
 		$stringData = json_encode($json,JSON_NUMERIC_CHECK);
 		fwrite($file, $stringData);
