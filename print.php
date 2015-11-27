@@ -10,12 +10,18 @@
 	$filename = "print.tmp";
 	if($_POST["action"] == "classified"){		
 		$file = fopen($filename, 'w') or die();
+		$count = 1;
 
 		foreach ($lines as $key => $value) {
+			if(count($json) <= $key) break;
+			$value = str_replace("\r", "", $value);
+
 			if($json[$key] == -1){
-				fwrite($file, $key . "," . $value . ",negatif\n");
+				fwrite($file, $count . "," . $value . ",negatif\n");
+				$count++;
 			}else if($json[$key] == 1){
-				fwrite($file, $key . "," . $value . ",positif\n");
+				fwrite($file, $count . "," . $value . ",positif\n");
+				$count++;
 			}
 		}
 		fclose($file);
@@ -24,6 +30,8 @@
 		$file = fopen($filename, 'w') or die();
 
 		foreach ($lines as $key => $value) {
+			if(count($json) <= $key) break;
+
 			if($json[$key] == -2){
 				fwrite($file, $value."\n");
 			}
